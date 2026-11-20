@@ -23,18 +23,18 @@ Build(someNode)
 Specialized functions are added for specific types, such as `color`for CCRGBAProtocol objects or `initTouch` for CCLayer objects. The `Build` wrapper also has shorthands for creating new objects:
 
 ```cpp
-Build<CCLabelBMFont>::create("Hello", "bigFont.fnt")
+Build<geode::Label>::create("Hello", "bigFont.fnt")
 	.color(255, 0, 0);
 ```
 
-Some classes have custom creator functions built-in, such as CCSprite and CCMenuItemToggler:
+Some classes have custom creator functions built-in, such as CCSprite and geode::Toggler:
 
 ```cpp
 // shorthand for Build(CCSprite::createWithSpriteFrameName(_));
 Build<CCSprite>::createSpriteName("GJ_lock_001.png");
 
 // creates a toggle with default checkboxes
-Build<CCMenuItemToggler>::createToggle([](auto) { log::info("toggled!"); });
+Build<geode::Toggler>::createToggle([](auto, bool) { log::info("toggled!"); });
 ```
 
 UIBuilder has some functions for dealing with children and node hierarchy. Here's some examples:
@@ -43,14 +43,14 @@ UIBuilder has some functions for dealing with children and node hierarchy. Here'
 auto node = Build<CCNode>::create();
 
 // Equivalent to node->addChild(_) but much cleaner
-Build<CCLabelBMFont>::create("Hello", "bigFont.fnt")
+Build<geode::Label>::create("Hello", "bigFont.fnt")
 	.parent(node);
 
 // Equivalent to multiple addChild calls.
 node.children(
 	Build<CCSprite>::createSpriteName("GJ_lock_001.png")
 		.rotation(90),
-	Build<CCLabelBMFont>::create("Hi!", "bigFont.fnt")
+	Build<geode::Label>::create("Hi!", "bigFont.fnt")
 		.scale(0.8)
 		.move(4, 0));
 ```
@@ -63,7 +63,7 @@ Build(exampleLayer)
 	.pushScene();
 
 Build<ButtonSprite>::create("Hey", "bigFont.fnt", "GJ_button_01.png")
-	.intoMenuItem([] { log::info("Button Pressed!!"); }) // returns Build<CCMenuItemSpriteExtra>
+	.intoButton([] { log::info("Button Pressed!!"); }) // returns Build<geode::Button>
 	.pos(40, 20)
 	.intoNewParent(CCMenu::create()) // returns Build<CCMenu>
 	.parent(exampleLayer);
@@ -101,7 +101,7 @@ auto layer = Build<CCLayer>::create()
 			.setAnchorOpts(Anchor::Center, ccp(5, 0)))
 	.updateLayout();
 
-Build<CCLabelBMFont>::create("Wow!", "goldFont.fnt")
+Build<geode::Label>::create("Wow!", "goldFont.fnt")
 	.anchorPoint({ 0, 0.5 })
 	// Equivalent to layer->addChildAtPosition
 	.parentAtPos(layer, Anchor::Top);

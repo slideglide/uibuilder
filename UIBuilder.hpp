@@ -45,28 +45,6 @@ namespace uibuilder {
 
 	// helper classes
 
-	template <typename T>
-	class BuildCallback : public CCNode {
-		FunctionType<void(T*)> m_callback;
-	 public:
-		static BuildCallback* create(FunctionType<void(T*)> cb) {
-			auto bc = new BuildCallback;
-
-			if (bc && bc->init()) {
-				bc->autorelease();
-				bc->m_callback = std::move(cb);
-				return bc;
-			}
-
-			CC_SAFE_DELETE(bc);
-			return nullptr;
-		}
-
-		void onCallback(CCObject* sender) {
-			m_callback(static_cast<T*>(sender));
-		}
-	};
-
 	class BuildSchedule : public CCNode {
 		FunctionType<void(float)> m_callback;
 	 public:
@@ -496,6 +474,146 @@ namespace uibuilder {
 
 		setter(geode::BasedButtonSprite, topScale, setTopRelativeScale, float)
 		setter(geode::BasedButtonSprite, topOffset, setTopOffset, CCPoint const&)
+
+		// geode::Button
+		setter(geode::Button, enabled, setEnabled, bool)
+		setter(geode::Button, displayNode, setDisplayNode, CCNode*)
+		setter(geode::Button, animationType, setAnimationType, geode::Button::AnimationType)
+		setter(geode::Button, activateCallback, setActivateCallback, geode::Button::ButtonCallback)
+		setter(geode::Button, selectCallback, setSelectCallback, geode::Button::ButtonCallback)
+		setter(geode::Button, unselectCallback, setUnselectCallback, geode::Button::ButtonCallback)
+		setter(geode::Button, touchPriority, setTouchPriority, int)
+		setter(geode::Button, touchMultiplier, setTouchMultiplier, float)
+		setter(geode::Button, scaleMultiplier, setScaleMultiplier, float)
+		setter(geode::Button, moveOffset, setMoveOffset, CCPoint const&)
+		setter(geode::Button, selectedDuration, setSelectedDuration, float)
+		setter(geode::Button, unselectedDuration, setUnselectedDuration, float)
+		setter(geode::Button, swallowTouches, setSwallowTouches, bool)
+		setter(geode::Button, dragCancelDistance, setDragCancelDistance, float)
+		setter(geode::Button, clickAnimation, setClickAnimation, CCActionInterval*)
+		setter(geode::Button, releaseAnimation, setReleaseAnimation, CCActionInterval*)
+
+		template <needs_same(geode::Button), typename Callback>
+		Build<T> addActivateCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addActivateCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::Button), typename Callback>
+		Build<T> addSelectCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addSelectCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::Button), typename Callback>
+		Build<T> addUnselectCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addUnselectCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		// geode::Toggler
+		setter(geode::Toggler, offNode, setOffNode, CCNode*)
+		setter(geode::Toggler, onNode, setOnNode, CCNode*)
+		setter(geode::Toggler, toggleCallback, setToggleCallback, geode::Toggler::ToggleCallback)
+
+		// geode::TextInput
+		setter(geode::TextInput, placeholder, setPlaceholder, std::string)
+		setter(geode::TextInput, placeholderColor, setPlaceholderColor, ccColor4B)
+		setter(geode::TextInput, selectionColor, setSelectionColor, ccColor4B)
+		setter(geode::TextInput, caretColor, setCaretColor, ccColor4B)
+		setter(geode::TextInput, caretWidth, setCaretWidth, float)
+		setter(geode::TextInput, textColor, setTextColor, ccColor4B)
+		setter(geode::TextInput, padding, setPadding, CCPoint)
+		setter(geode::TextInput, alignment, setAlignment, geode::Label::Alignment)
+		setter(geode::TextInput, filter, setFilter, std::string)
+		setter(geode::TextInput, commonFilter, setCommonFilter, geode::CommonFilter)
+		setter(geode::TextInput, label, setLabel, std::string)
+		setter(geode::TextInput, maxCharCount, setMaxCharCount, size_t)
+		setter(geode::TextInput, passwordMode, setPasswordMode, bool)
+		setter(geode::TextInput, numericMode, setNumericMode, bool)
+		setter(geode::TextInput, multiline, setMultiline, bool)
+		setter(geode::TextInput, enabled, setEnabled, bool)
+		setter(geode::TextInput, wrap, setWrap, bool)
+		setter(geode::TextInput, overflowMode, setOverflowMode, geode::TextInput::OverflowMode)
+		setter(geode::TextInput, fontScale, setFontScale, float)
+		setter(geode::TextInput, placeholderScale, setPlaceholderScale, float)
+		setter(geode::TextInput, displayEmojis, setDisplayEmojis, bool)
+		setter(geode::TextInput, hideBG, hideBG)
+		setter(geode::TextInput, string, setString, std::string_view, bool)
+		setter(geode::TextInput, callback, setCallback, geode::Function<void(std::string const&)>)
+		setter(geode::TextInput, enterCallback, setEnterCallback, geode::Function<void(std::string const&)>)
+		setter(geode::TextInput, focusCallback, setFocusCallback, geode::Function<void(geode::TextInput::FocusState)>)
+		setter(geode::TextInput, keyboardOffsetCallback, setKeyboardOffsetCallback, geode::Function<void(float)>)
+		setter(geode::TextInput, keyboardHideCallback, setKeyboardHideCallback, geode::Function<void()>)
+		setter(geode::TextInput, cursorPos, setCursorPos, int)
+		setter(geode::TextInput, selection, setSelection, int, int)
+
+		template <needs_same(geode::TextInput), typename Callback>
+		Build<T> addTextChangedCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addTextChangedCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::TextInput), typename Callback>
+		Build<T> addFocusCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addFocusCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::TextInput), typename Callback>
+		Build<T> addUnfocusCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addUnfocusCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+		setter(geode::TextInput, focus, focus)
+		setter(geode::TextInput, unfocus, unfocus)
+
+		// geode::NineSlice
+		setter(geode::NineSlice, insets, setInsets, geode::NineSlice::Insets const&)
+		setter(geode::NineSlice, repeatCenter, setRepeatCenter, bool)
+		setter(geode::NineSlice, scaleMultiplier, setScaleMultiplier, float)
+		setter(geode::NineSlice, insetTop, setInsetTop, float)
+		setter(geode::NineSlice, insetRight, setInsetRight, float)
+		setter(geode::NineSlice, insetBottom, setInsetBottom, float)
+		setter(geode::NineSlice, insetLeft, setInsetLeft, float)
+
+		// geode::SliderNode
+		setter(geode::SliderNode, value, setValue, float)
+		setter(geode::SliderNode, percent, setPercent, float)
+		setter(geode::SliderNode, min, setMin, float)
+		setter(geode::SliderNode, max, setMax, float)
+		setter(geode::SliderNode, enabled, setEnabled, bool)
+		setter(geode::SliderNode, snapStep, setSnapStep, float)
+		setter(geode::SliderNode, readOnly, setReadOnly, bool)
+		setter(geode::SliderNode, sliderBypass, setSliderBypass, bool)
+		setter(geode::SliderNode, slideCallback, setSlideCallback, geode::SliderNode::SliderCallback)
+		setter(geode::SliderNode, clickCallback, setClickCallback, geode::SliderNode::SliderCallback)
+		setter(geode::SliderNode, releaseCallback, setReleaseCallback, geode::SliderNode::SliderCallback)
+		setter(geode::SliderNode, touchPriority, setTouchPriority, int)
+		setter(geode::SliderNode, linkTextInput, linkTextInput, geode::TextInput*, unsigned int)
+		setter(geode::SliderNode, linkLabel, linkLabel, geode::Label*, unsigned int)
+		setter(geode::SliderNode, unlinkTextInput, unlinkTextInput)
+		setter(geode::SliderNode, unlinkLabel, unlinkLabel)
+		setter(geode::SliderNode, textInputPrecision, setTextInputPrecision, unsigned int)
+		setter(geode::SliderNode, labelPrecision, setLabelPrecision, unsigned int)
+
+		template <needs_same(geode::SliderNode), typename Callback>
+		Build<T> addSlideCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addSlideCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::SliderNode), typename Callback>
+		Build<T> addClickCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addClickCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
+
+		template <needs_same(geode::SliderNode), typename Callback>
+		Build<T> addReleaseCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addReleaseCallback(id, std::forward<Callback>(callback), priority);
+			return *this;
+		}
 		#endif
 
 		// CCRGBAProtocol
@@ -558,55 +676,57 @@ namespace uibuilder {
 		setter(CCMenuItem, enabled, setEnabled, bool)
 		setter(CCMenuItem, target, setTarget, CCObject*, SEL_MenuHandler)
 
-		// CCMenuItemSpriteExtra
-		setter(CCMenuItemSpriteExtra, sizeMult, setSizeMult, float)
+		// geode::Toggler
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggle(char const* off, char const* on, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithSpriteFrameNames(off, on, std::move(fn)));
+		}
 
-		template <needs_base(CCMenuItemSpriteExtra)>
-		Build<T> scaleMult(float p0) {
-			this->m_item->m_scaleMultiplier = p0;
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggle(geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithStandardSprites(std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggle(float scale, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithStandardSprites(scale, std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggle(CCNode* off, CCNode* on, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::create(off, on, std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggle(char const* off, char const* on, float scale, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithSpriteFrameNames(off, on, scale, std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggleFiles(geode::ZStringView off, geode::ZStringView on, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithSprites(off, on, std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		static Build<T> createToggleFiles(geode::ZStringView off, geode::ZStringView on, float scale, geode::Toggler::ToggleCallback fn) {
+			return Build<T>(geode::Toggler::createWithSprites(off, on, scale, std::move(fn)));
+		}
+
+		template <needs_same(geode::Toggler)>
+		Build<T> toggle(bool triggerCallback = false) {
+			m_item->toggle(triggerCallback);
 			return *this;
 		}
-		template <needs_base(CCMenuItemSpriteExtra)>
-		Build<T> colorEnabled(bool enabled) {
-			this->m_item->m_colorEnabled = enabled;
-			return *this;
-		}
-		template <needs_base(CCMenuItemSpriteExtra)>
-		Build<T> animationEnabled(bool enabled) {
-			this->m_item->m_animationEnabled = enabled;
+
+		template <needs_same(geode::Toggler), typename Callback>
+		Build<T> addToggleCallback(geode::ZStringView id, Callback&& callback, int priority = 0) {
+			m_item->addToggleCallback(id, std::forward<Callback>(callback), priority);
 			return *this;
 		}
 
-		// CCMenuItemToggler
-		template <needs_same(CCMenuItemToggler)>
-		static Build<T> createToggle(CCSprite* on, CCSprite* off, FunctionType<void(CCMenuItemToggler*)> fn) {
-			auto bc = BuildCallback<CCMenuItemToggler>::create(std::move(fn));
-
-			return Build<CCMenuItemToggler>::create(
-				on,
-				off,
-				bc,
-				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
-			).child(bc);
-		}
-
-		template <needs_same(CCMenuItemToggler)>
-		static Build<T> createToggle(char const* on, char const* off, FunctionType<void(CCMenuItemToggler*)> fn) {
-			return Build<T>::createToggle(
-				CCSprite::createWithSpriteFrameName(on),
-				CCSprite::createWithSpriteFrameName(off),
-				std::move(fn)
-			);
-		}
-
-		template <needs_same(CCMenuItemToggler)>
-		static Build<T> createToggle(FunctionType<void(CCMenuItemToggler*)> fn) {
-			return Build<T>::createToggle("GJ_checkOn_001.png", "GJ_checkOff_001.png", std::move(fn));
-		}
-
-		template <needs_same(CCMenuItemToggler)>
-		Build<T> toggle(bool tog) {
-			m_item->toggle(tog);
+		template <needs_same(geode::Toggler)>
+		Build<T> toggled(bool toggled, bool triggerCallback = false) {
+			m_item->setToggled(toggled, triggerCallback);
 			return *this;
 		}
 
@@ -627,51 +747,20 @@ namespace uibuilder {
 		setter(CCSprite, blendFunc, setBlendFunc, ccBlendFunc)
 
 		template <needs_base(CCNode)>
-		Build<CCMenuItemSpriteExtra> intoMenuItem(CCObject* target, auto selector) {
+		Build<geode::Button> intoButton(geode::Button::ButtonCallback fn) {
 			auto parent = m_item->getParent();
 			if (parent)
 				parent->removeChild(m_item);
 
-			auto ret = Build<CCMenuItemSpriteExtra>::create(m_item, m_item, target, (SEL_MenuHandler)selector);
+			auto ret = Build<geode::Button>(geode::Button::createWithNode(m_item, std::move(fn)));
 			if (parent) ret.parent(parent);
 			return ret;
 		}
 
+		// same as intoButton except the callback can be with no args
 		template <needs_base(CCNode)>
-		Build<CCMenuItemSpriteExtra> intoMenuItem(FunctionType<void(CCMenuItemSpriteExtra*)> fn) {
-			auto bc = BuildCallback<CCMenuItemSpriteExtra>::create(std::move(fn));
-
-			auto parent = m_item->getParent();
-			if (parent)
-				parent->removeChild(m_item);
-
-			auto ret = Build<CCMenuItemSpriteExtra>::create(
-				m_item,
-				m_item,
-				bc,
-				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
-			).child(bc);
-			if (parent) ret.parent(parent);
-			return ret;
-		}
-
-		// same as intoMenuItem except the callback can be with no args
-		template <needs_base(CCNode)>
-		Build<CCMenuItemSpriteExtra> intoMenuItem(FunctionType<void()> fn) {
-			auto bc = BuildCallback<CCMenuItemSpriteExtra>::create([fn = std::move(fn)] (auto) mutable { fn(); });
-
-			auto parent = m_item->getParent();
-			if (parent)
-				parent->removeChild(m_item);
-
-			auto ret = Build<CCMenuItemSpriteExtra>::create(
-				m_item,
-				m_item,
-				bc,
-				menu_selector(BuildCallback<CCMenuItemSpriteExtra>::onCallback)
-			).child(bc);
-			if (parent) ret.parent(parent);
-			return ret;
+		Build<geode::Button> intoButton(FunctionType<void()> fn) {
+			return intoButton([fn = std::move(fn)] (auto) mutable { fn(); });
 		}
 
 		template <needs_base(CCLabelProtocol)>
@@ -683,30 +772,66 @@ namespace uibuilder {
 		// CCLabelProtocol
 		setter(CCLabelProtocol, string, setString, const char*)
 
-		// CCLabelBMFont
-		setter(CCLabelBMFont, alignment, setAlignment, CCTextAlignment)
-		setter(CCLabelBMFont, limitLabelWidth, limitLabelWidth, float, float, float)
-		setter(CCLabelBMFont, kerning, setExtraKerning, float)
-		setter(CCLabelBMFont, breakWithoutSpace, setLineBreakWithoutSpace, bool)
+		// geode::Label
+		setter(geode::Label, text, setText, std::string)
+		setter(geode::Label, alignment, setAlignment, geode::Label::Alignment)
+		setter(geode::Label, maxWidth, setMaxWidth, float)
+		setter(geode::Label, breakWords, setBreakWords, bool)
+		setter(geode::Label, limitLabelWidth, setLimitLabelWidth, float, float, float)
+		setter(geode::Label, kerning, setExtraKerning, float)
+		setter(geode::Label, lineSpacing, setLineSpacing, float)
+		setter(geode::Label, richText, setRichTextEnabled, bool)
+		setter(geode::Label, font, setFont, geode::ZStringView, size_t)
+		setter(geode::Label, richTextString, setRichText, std::string)
+		setter(geode::Label, runs, setRuns, std::vector<geode::Label::Run>)
+		setter(geode::Label, limitLabelHeight, setLimitLabelHeight, float, float, float)
+		setter(geode::Label, limitLabelSize, setLimitLabelSize, CCSize, float, float)
+		setter(geode::Label, removeLabelSizeLimit, removeLabelSizeLimit)
+		setter(geode::Label, fitBox, setFitBox, CCSize, float)
+		setter(geode::Label, disableFitBox, disableFitBox)
+		setter(geode::Label, charColor, setCharColor, uint32_t, ccColor4B)
+		setter(geode::Label, emojiRegistry, setEmojiRegistry, geode::EmojiRegistry const&)
+		setter(geode::Label, disableEmojis, disableEmojis)
+		setter(geode::Label, useColoredEmojis, setUseColoredEmojis, bool)
+		setter(geode::Label, useColoredNodes, setUseColoredNodes, bool)
 
-		// CCTextInputNode
-		setter(CCTextInputNode, labelColor, setLabelNormalColor, ccColor3B const&)
-		setter(CCTextInputNode, placeholderColor, setLabelPlaceholderColor, ccColor3B const&)
-		setter(CCTextInputNode, placeholderScale, setLabelPlaceholderScale, float)
-		setter(CCTextInputNode, maxScale, setMaxLabelScale, float)
-		setter(CCTextInputNode, maxWidth, setMaxLabelWidth, float)
-		setter(CCTextInputNode, allowedChars, setAllowedChars, std::string const&)
-		setter(CCTextInputNode, string, setString, std::string const&)
-		setter(CCTextInputNode, delegate, setDelegate, TextInputDelegate*)
-		setter(CCTextInputNode, trackOnClick, onClickTrackNode, bool)
+		// geode::ScrollLayer
+		setter(geode::ScrollLayer, scrollWheel, enableScrollWheel, bool)
+		setter(geode::ScrollLayer, scrollToFromTop, scrollToFromTop, float)
+		setter(geode::ScrollLayer, scrollToTop, scrollToTop)
+		setter(geode::ScrollLayer, cancelTouchLimit, setCancelTouchLimit, float)
+		setter(geode::ScrollLayer, stealingTouches, setStealingTouches, bool)
+		setter(geode::ScrollLayer, touchClipping, enableTouchClipping, bool)
+		setter(geode::ScrollLayer, scrollClipping, enableScrollClipping, bool)
+		setter(geode::ScrollLayer, stencil, setStencil, CCNode*)
 
-		// CCScale9Sprite
-		setter(CCScale9Sprite, preferredSize, setPreferredSize, CCSize const&)
-		setter(CCScale9Sprite, capInsets, setCapInsets, CCRect const&)
+		template <needs_same(geode::ScrollLayer)>
+		Build<T> defaultListLayout(float gap = 2.5f) {
+			m_item->m_contentLayer->setLayout(geode::ScrollLayer::createDefaultListLayout(gap));
+			return *this;
+		}
 
-		// Slider
-		setter(Slider, value, setValue, float)
-		setter(Slider, barVisible, setBarVisibility, bool)
+		// geode::Scrollbar
+		setter(geode::Scrollbar, target, setTarget, CCScrollLayerExt*)
+		setter(geode::Scrollbar, track, setTrack, geode::NineSlice*)
+		setter(geode::Scrollbar, thumb, setThumb, geode::NineSlice*)
+		setter(geode::Scrollbar, shrinkWithOverscroll, setShrinkWithOverscroll, bool)
+		setter(geode::Scrollbar, touchInThumb, setTouchInThumb, bool)
+		setter(geode::Scrollbar, style, setStyle, geode::Scrollbar::Style)
+		setter(geode::Scrollbar, thumbColors, setThumbColors, ccColor4B, ccColor4B)
+
+		// geode::BoxedLabel
+		setter(geode::BoxedLabel, text, setText, std::string)
+		setter(geode::BoxedLabel, font, setFont, geode::ZStringView)
+		setter(geode::BoxedLabel, textScale, setTextScale, float)
+		setter(geode::BoxedLabel, textAlignment, setTextAlignment, geode::Label::Alignment)
+		setter(geode::BoxedLabel, maxWidth, setMaxWidth, float)
+		setter(geode::BoxedLabel, padding, setPadding, float)
+		setter(geode::BoxedLabel, boxSprite, setBoxSprite, geode::ZStringView)
+		setter(geode::BoxedLabel, boxColor, setBoxColor, ccColor3B const&)
+		setter(geode::BoxedLabel, boxOpacity, setBoxOpacity, GLubyte)
+		setter(geode::BoxedLabel, boxScale, setBoxScale, float)
+		setter(geode::BoxedLabel, lockWidth, lockWidth, bool)
 
 		// ButtonSprite
 		setter(ButtonSprite, string, setString, char const*)
